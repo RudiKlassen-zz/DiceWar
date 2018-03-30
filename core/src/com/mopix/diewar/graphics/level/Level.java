@@ -10,7 +10,7 @@ public class Level {
 
     //TODO rukl private Environment environment = new Environment();
 
-    public Level(int width, int height, int hexagonSize) {
+    public Level(int width, int height, float hexagonSize) {
         this.width = width;
         this.height = height;
         levelProvider = new LevelProvider(0, 0, width, height, hexagonSize);

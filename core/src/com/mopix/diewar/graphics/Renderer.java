@@ -33,9 +33,24 @@ public class Renderer extends ApplicationAdapter {
 
     @Override
     public void create() {
-        level = new Level(100, 100, Config.HEXAGON_SIZE);
+        int levelWidth = 100;
+        int levelHeight = 30;
+        float hexagonSize = calculateHexagonSize(levelWidth, levelHeight);
+
+        level = new Level(levelWidth, levelHeight, hexagonSize);
         mainCamera = new OrthographicCamera();
         mainCamera.setToOrtho(true, level.getWidth(), level.getHeight());
+    }
+
+    /**
+     * TODO
+     * @param levelWidth
+     * @param levelHeight
+     * @return
+     */
+    private float calculateHexagonSize(int levelWidth, int levelHeight) {
+        int max = Math.max(levelHeight, levelWidth);
+        return 1; //TODO correct when field selection is implemented
     }
 
     @Override

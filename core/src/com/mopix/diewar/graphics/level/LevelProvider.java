@@ -24,16 +24,13 @@ public class LevelProvider implements RenderableProvider {
     private Material material;
 
     //TODO das hier mal ordentlich auf eine hexagon struktur mappen
-    LevelProvider(int fromX, int fromY, int width, int height, int hexagonSize) {
+    LevelProvider(int fromX, int fromY, int width, int height, float hexagonSize) {
         levelChunk = new LevelChunk(fromX, fromY, width, height, hexagonSize);
 
         int depth = 1;
         int len = width * height * depth *12;
         vertices = new float[width * height * depth *6 *10];
         short[] indices = new short[len];
-
-
-
 
         for (int i = 0, j = 0; i < (len); i += 12, j += 6) {
             indices[i] = (short) j;

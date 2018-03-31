@@ -1,12 +1,11 @@
-package com.mopix.diewar.graphics.level;
+package com.mopix.diewar.graphics.level.TileSetThemes.Phantasy;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Polygon;
-import com.sun.scenario.effect.impl.prism.PrImage;
+import com.mopix.diewar.graphics.level.TileSetThemes.CellType;
 
 public class LevelField {
 
-    private LevelType type;
+    private CellType type;
 
     private float opacity;
 
@@ -14,11 +13,11 @@ public class LevelField {
 
     private Color color;
 
-    public LevelType getType() {
+    public CellType getType() {
         return type;
     }
 
-    public void setType(LevelType type) {
+    public void setType(CellType type) {
         this.type = type;
     }
 

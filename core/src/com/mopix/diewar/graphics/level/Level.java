@@ -1,19 +1,21 @@
 package com.mopix.diewar.graphics.level;
 
+/**
+ * TODO doc and tests
+ */
 public class Level {
 
     private int width;
 
     private int height;
 
-    private LevelProvider levelProvider;
+    private LevelType[][] levelMap;
 
-    //TODO rukl private Environment environment = new Environment();
 
-    public Level(int width, int height, float hexagonSize) {
+    public Level(int width, int height) {
         this.width = width;
         this.height = height;
-        levelProvider = new LevelProvider(0, 0, width, height, hexagonSize);
+        levelMap = new LevelType[width][height];
     }
 
     public int getWidth() {
@@ -24,7 +26,4 @@ public class Level {
         return height;
     }
 
-    public LevelProvider getLevelProvider() {
-        return levelProvider;
-    }
 }

@@ -4,42 +4,71 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayers;
+import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector3;
 import com.mopix.diewar.Config;
+import com.mopix.diewar.Utility;
 import com.mopix.diewar.graphics.level.Level;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Renderer extends ApplicationAdapter {
 
-    private ModelBatch modelBatch = new ModelBatch();
-
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
-
-    private Environment environment = new Environment();
-
-    private Color waterColorFlowTop = new Color(13f / 255f, 25f / 255f, 51f / 255f, 1f);
-
-    private Color waterColorFlowBottom = new Color(13f / 255f, 25f / 255f, 51f / 255f, 1f);
 
     private Level level;
 
+    MapRenderer sdf;
+
     private OrthographicCamera mainCamera;
+
+    public Renderer() {
+        Utility.loadTextureAsset("hexagonTileset8x5.png");
+        Texture textureAsset = Utility.getTextureAsset("hexagonTileset8x5.png");
+        TextureRegion texture_region = new TextureRegion(textureAsset, 32,0,32, 48);
+
+
+        TiledMap map = new TiledMap();
+        MapLayers layers = map.getLayers();
+
+        TiledMapTileLayer layer1 = new TiledMapTileLayer(1000, 1000, 32, 30);
+        TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+
+        cell.setTile(new StaticTiledMapTile(texture_region));
+        layer1.setCell(2, 1, cell);
+        layer1.setCell(1, 1, cell);
+        layer1.setCell(3, 1, cell);
+        layer1.setCell(3, 2, cell);
+
+        layers.add(layer1);
+
+        sdf = new HexagonalTiledMapRenderer(map);
+
+    }
 
     @Override
     public void create() {
-        int levelWidth = 100;
-        int levelHeight = 30;
+        int levelWidth = 1000;
+        int levelHeight = 1000;
         float hexagonSize = calculateHexagonSize(levelWidth, levelHeight);
 
-        level = new Level(levelWidth, levelHeight, hexagonSize);
+      //  level = new Level(levelWidth, levelHeight, hexagonSize);
         mainCamera = new OrthographicCamera();
-        mainCamera.setToOrtho(true, level.getWidth(), level.getHeight());
+        mainCamera.setToOrtho(false, levelWidth, levelHeight);
     }
 
     /**
@@ -55,18 +84,8 @@ public class Renderer extends ApplicationAdapter {
 
     @Override
     public void render() {
-        modelBatch.begin(mainCamera);
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        shapeRenderer.setColor(Color.RED);
-        // bottom_left, bottom_right, top_right, top_left
-        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), waterColorFlowTop, waterColorFlowTop, waterColorFlowBottom,
-                waterColorFlowBottom);
-        shapeRenderer.end();
-
-        modelBatch.render(level.getLevelProvider());
-        modelBatch.end();
+        sdf.setView(mainCamera);
+        sdf.render();
     }
 
     @Override

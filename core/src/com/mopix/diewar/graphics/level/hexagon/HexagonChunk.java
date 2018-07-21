@@ -1,7 +1,17 @@
-package com.mopix.diewar.graphics.hexagon;
+package com.mopix.diewar.graphics.level.hexagon;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.PolygonRegion;
+import com.badlogic.gdx.graphics.g2d.PolygonSprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fast ein Anzahl von Hexagons in einem Array zusammen.
@@ -39,7 +49,7 @@ public class HexagonChunk {
 
         for (int x = 0; x < colorMap.length; x++) {
             for (int y = 0; y < colorMap[0].length; y++) {
-                colorMap[x][y] = null;
+                colorMap[x][y] = Color.RED;
             }
         }
 
@@ -76,13 +86,58 @@ public class HexagonChunk {
     /**
      * Prüft, ob is die Position (x, y) innerhalb des Chunks befindet
      *
-     * @param x breite
-     * @param y hoehe
+     * @param x Position in der Breite
+     * @param y Position in der Höhe
      * @return true, wenn die Position innerhalb des Chunks
      * false, wenn die Position außerhalb des Chunks
      */
     public boolean isPositionAvailable(int x, int y) {
         return x > 0 && y > 0 && x < width && y < height;
+    }
+
+
+    public   List<PolygonSprite> build2() {
+
+        List<PolygonSprite> polygonSprites = new ArrayList<PolygonSprite>();
+
+        for (int x = 0; x < colorMap.length; x++) {
+            for (int y = 0; y < colorMap[0].length; y++) {
+
+                Color color = colorMap[x][y];
+                if (color == null) {
+                    continue;
+                }
+
+                int startPositionX = (fromX + x) * hexagonWidth;
+                int startPositionY = (fromY + y) * hexagonWidth;
+                Vector2 pos = new Vector2(startPositionX, startPositionY);
+
+                float[] asdf =  {
+                        pos.x + hexagonWidth / 2, pos.y,
+                        pos.x + hexagonWidth, pos.y + hexagonHeight * .25f,
+                        pos.x + hexagonWidth, pos.y + hexagonHeight * .75f,
+                        pos.x + hexagonWidth / 2, pos.y + hexagonHeight,
+                        pos.x, pos.y + hexagonHeight * .75f,
+                        pos.x, pos.y + hexagonHeight * .25f
+                };
+
+
+
+                Texture texture = new Texture(Gdx.files.internal("icon.png"));
+                texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+                PolygonRegion polygonRegion = new PolygonRegion(//
+                        new TextureRegion(texture),//
+                        asdf,//
+                        new EarClippingTriangulator().computeTriangles(asdf).toArray());
+                PolygonSprite polygonSprite = new PolygonSprite(polygonRegion);
+                polygonSprite.setOrigin(pos.x + width / 2, pos.y + height / 2);
+                polygonSprites.add(polygonSprite);
+            }
+        }
+
+        return polygonSprites;
+
     }
 
     public int build(float[] vertices) {
@@ -112,21 +167,27 @@ public class HexagonChunk {
 
         vertices[vertexOffset++] = position.x + hexagonWidth / 2;
         vertices[vertexOffset++] = position.y;
+        vertices[vertexOffset++] = 0;
 
         vertices[vertexOffset++] = position.x + hexagonWidth;
         vertices[vertexOffset++] = position.y + hexagonHeight * 0.25f;
+        vertices[vertexOffset++] = 0;
 
         vertices[vertexOffset++] = position.x + hexagonWidth;
         vertices[vertexOffset++] = position.y + hexagonHeight * 0.75f;
+        vertices[vertexOffset++] = 0;
 
         vertices[vertexOffset++] = position.x + hexagonWidth / 2;
         vertices[vertexOffset++] = position.y + hexagonHeight;
+        vertices[vertexOffset++] = 0;
 
         vertices[vertexOffset++] = position.x;
         vertices[vertexOffset++] = position.y + hexagonHeight * 0.75f;
+        vertices[vertexOffset++] = 0;
 
         vertices[vertexOffset++] = position.x;
         vertices[vertexOffset++] = position.y + hexagonHeight * 0.25f;
+        vertices[vertexOffset++] = 0;
 
         return vertexOffset;
     }

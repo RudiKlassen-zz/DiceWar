@@ -1,47 +1,35 @@
-package com.mopix.diewar.graphics.hexagon;
+package com.mopix.diewar.graphics.level.hexagon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.PolygonSprite;
+import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.environment.PointLight;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.mopix.diewar.CONFIG;
 
 
 public class WorldManager {
 
-    private WorldService worldService = WorldService.getInstance();
-
-    private OrthographicCamera diceWarsCamera;
-
-    private ModelBatch modelBatch = new ModelBatch();
+    private final int viewportWidth;
+    private final int viewportHeight;
+    private OrthographicCamera orthographicCamera;
+    private PolygonSpriteBatch polygonSpriteBatch = new PolygonSpriteBatch();
+    private WorldController worldController;
 
     private Environment environment = new Environment();
 
-    private float stepSize;
-
-    private int maxSteps;
-
-    private Color waterColorFlowTop = new Color(13f / 255f, 25f / 255f, 51f / 255f, 1f);
-
-    private Color waterColorFlowBottom = new Color(13f / 255f, 25f / 255f, 51f / 255f, 1f);
-
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
-
-    public WorldManager() {
+    public WorldManager(int viewportWidth, int viewportHeight) {
+        this.viewportWidth = viewportWidth;
+        this.viewportHeight = viewportHeight;
+        worldController = new WorldController(100, 100);
 
         initializeCamera();
         initializeEnvironment();
-
-        //TODO rukl
-//        this.stepSize = CONFIG.HEXAGON_SIZE / CONFIG.STEP_SIZE_DEVIDER;
-//        this.maxSteps = CONFIG.MAX_STEPS_FOR_LEVELFIELD_SELECTION;
     }
 
     private void initializeEnvironment() {
@@ -58,65 +46,30 @@ public class WorldManager {
     }
 
     private void initializeCamera() {
-        float screenWidthHeightRatio = (float) Gdx.graphics.getHeight() / (float) Gdx.graphics.getWidth();
-        diceWarsCamera = new OrthographicCamera(CONFIG.CAMERAUNIT_WIDTH, CONFIG.CAMERAUNIT_HEIGHT * screenWidthHeightRatio);
-        diceWarsCamera.position.set(new Vector3(CONFIG.CAMERAPOSITION_X, CONFIG.CAMERAPOSITION_Y, CONFIG.CAMERAPOSITION_Z));
-        diceWarsCamera.direction.set(1, -1, 1);
-        diceWarsCamera.near = (0);
-        diceWarsCamera.far = (CONFIG.FARPLANE);
-        diceWarsCamera.update();
+        orthographicCamera = new OrthographicCamera(1280, 900);
+        orthographicCamera.setToOrtho(true);
+        orthographicCamera.position.set(orthographicCamera.viewportWidth / 2f, orthographicCamera.viewportHeight / 2f, 0);
+        orthographicCamera.update();
     }
 
-    public void draw() {
-        modelBatch.begin(diceWarsCamera);
-        modelBatch.render(worldService.getHexagonWorld(), environment);
-        modelBatch.end();
-    }
+    public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
 
-    public boolean isCubeLevelfieldCube(int x, int y) {
-        return worldService.isPositionAvailable(x, y);
-    }
+        orthographicCamera.update();
+        polygonSpriteBatch.setProjectionMatrix(orthographicCamera.combined);
 
-    public boolean isPositionWithinCubes(int x, int y, int z) {
-        HexagonWorld world = worldService.getHexagonWorld();
-        if (x >= 0 && y >= 0 && z >= 0) {
-            if (x < world.getWidth() && y < world.getHeight()) {
-                return true;
+        worldController.update();
+        PolygonSprite[][] sprites = worldController.getSprites();
+        polygonSpriteBatch.begin();
+        for (int y = 0; y < sprites.length; y++) {
+            for (int x = 0; x < sprites[0].length; x++) {
+                if (sprites[x][y] != null) {
+                    sprites[x][y].draw(polygonSpriteBatch);
+                }
             }
         }
-
-        return false;
-    }
-
-    /**
-     * Berechnet anhand der Screen-Position x und y
-     */
-    public Vector2 screenPositionToLevelPosition(int screenX, int screenY) {
-        Vector3 position = diceWarsCamera.unproject(new Vector3(screenX, screenY, 0));// unproject nearplane
-        return screenPositionToLevelPosition(position, diceWarsCamera.direction);
-    }
-
-    public Vector2 screenPositionToLevelPosition(Vector3 position, Vector3 direction) {
-        //TODO rukl
-
-//        Vector3 endpoint;
-//        int resultPositionX;
-//        int resultPositionZ;
-//        int steps = 0;
-//
-//        do {
-//            endpoint = position.mulAdd(direction, stepSize);
-//            if (isPositionWithinCubes((int) endpoint.x, (int) endpoint.y, (int) endpoint.z)) {
-//                if (isCubeLevelfieldCube((int) endpoint.x, (int) endpoint.y, (int) endpoint.z)) {
-//                    resultPositionX = (int) endpoint.x;
-//                    resultPositionZ = (int) endpoint.z;
-//                    return new Vector2(resultPositionX, resultPositionZ);
-//                }
-//            }
-//            steps++;
-//        } while (endpoint.y > 0 && steps < maxSteps);
-
-        return null;
+        polygonSpriteBatch.end();
     }
 
     public void resize() {
@@ -124,7 +77,6 @@ public class WorldManager {
     }
 
     public void dispose() {
-        worldService.dispose();
     }
 
 }

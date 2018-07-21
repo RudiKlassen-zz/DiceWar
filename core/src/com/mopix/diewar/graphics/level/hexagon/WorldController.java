@@ -27,11 +27,11 @@ public class WorldController {
         sprites = new PolygonSprite[width][height];
 
         this.pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.RED);
+        pixmap.setColor(Color.WHITE);
         pixmap.fillRectangle(0, 0, 32, 32);
 
-        for (int y = 0; y < config.length; y++) {
-            for (int x = 0; x < config[0].length; x++) {
+        for (int x = 0; x < config.length; x++) {
+            for (int y = 0; y < config[0].length; y++) {
                 sprites[x][y] = createPolygonSprite(x * 100, y * 100);
                 modified = true;
             }
@@ -50,7 +50,6 @@ public class WorldController {
             modified = true;
         }
     }
-
 
     public void add(int positionX, int positionY, Color color) {
 
@@ -81,10 +80,8 @@ public class WorldController {
         return positionX > 0 && positionX < width && positionY > 0 && positionY < height;
     }
 
-
     Color[] colors = {Color.RED, Color.GOLD, Color.GRAY, Color.GREEN, Color.BLACK};
     public void update() {
-
 
         int xx = 0 + (int) (Math.random() * 100);
         int yx = 0 + (int) (Math.random() * 100);
@@ -92,14 +89,12 @@ public class WorldController {
 
         add(xx, yx,colors[c]);
 
-
         xx = 0 + (int) (Math.random() * 100);
         yx = 0 + (int) (Math.random() * 100);
         remove(xx, yx);
 
-
-        for (int y = 0; y < config.length; y++) {
-            for (int x = 0; x < config.length; x++) {
+        for (int x = 0; x < config.length; x++) {
+            for (int y = 0; y< config[0].length; y++) {
                 Hexagon hexagon = config[x][y];
 
                 if (hexagon == null) {
@@ -131,7 +126,6 @@ public class WorldController {
                 positionX, positionY + hexHeight * .25f
         };
 
-
         Texture texture = new Texture(pixmap);
         texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
@@ -147,4 +141,5 @@ public class WorldController {
     public PolygonSprite[][] getSprites() {
         return sprites;
     }
+
 }

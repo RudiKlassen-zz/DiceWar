@@ -26,7 +26,7 @@ public class WorldManager {
     public WorldManager(int viewportWidth, int viewportHeight) {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
-        worldController = new WorldController(100, 100);
+        worldController = new WorldController(40, 30);
 
         initializeCamera();
         initializeEnvironment();
@@ -62,8 +62,8 @@ public class WorldManager {
         worldController.update();
         PolygonSprite[][] sprites = worldController.getSprites();
         polygonSpriteBatch.begin();
-        for (int y = 0; y < sprites.length; y++) {
-            for (int x = 0; x < sprites[0].length; x++) {
+        for (int x = 0; x < sprites.length; x++) {
+            for (int y = 0; y < sprites[0].length; y++) {
                 if (sprites[x][y] != null) {
                     sprites[x][y].draw(polygonSpriteBatch);
                 }
@@ -77,6 +77,7 @@ public class WorldManager {
     }
 
     public void dispose() {
+
     }
 
 }

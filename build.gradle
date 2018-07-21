@@ -44,6 +44,8 @@ allprojects {
         compile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.9'
         compile group: 'ch.qos.logback', name:'logback-core', version: '1.0.9'
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+        compile group: 'com.google.inject', name: 'guice', version: '4.0'
+
     }
 }
 

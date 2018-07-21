@@ -83,6 +83,7 @@ public class WorldController {
     Color[] colors = {Color.RED, Color.GOLD, Color.GRAY, Color.GREEN, Color.BLACK};
     public void update() {
 
+        //TODO just for tests
         int xx = 0 + (int) (Math.random() * 100);
         int yx = 0 + (int) (Math.random() * 100);
         int c = 0 + (int) (Math.random() * colors.length);
@@ -92,6 +93,11 @@ public class WorldController {
         xx = 0 + (int) (Math.random() * 100);
         yx = 0 + (int) (Math.random() * 100);
         remove(xx, yx);
+        ////
+
+        if (!modified) {
+            return;
+        }
 
         for (int x = 0; x < config.length; x++) {
             for (int y = 0; y< config[0].length; y++) {

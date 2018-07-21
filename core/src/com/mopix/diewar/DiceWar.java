@@ -3,24 +3,28 @@ package com.mopix.diewar;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.mopix.diewar.game.GameMaster;
+import com.mopix.diewar.graphics.Renderer;
 
-public class DiceWar extends ApplicationAdapter{
+public class DiceWar extends ApplicationAdapter {
 
-	private GameMaster gameMaster;
+    private Renderer tileManager;
 
-	public void create () {
-		gameMaster = new GameMaster();
-	}
+    public void create() {
+        tileManager = new Renderer(CONFIG.APPLICATION_WIDTH, CONFIG.APPLICATION_HEIGHT);
+        tileManager.create();
+    }
 
-	@Override
-	public void render() {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		gameMaster.render();
-	}
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-	@Override
-	public void dispose () {
-	}
+        tileManager.update();
+        tileManager.render();
+    }
+
+    @Override
+    public void dispose() {
+        //TODO rukl
+    }
 }

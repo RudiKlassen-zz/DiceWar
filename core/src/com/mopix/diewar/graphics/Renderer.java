@@ -1,67 +1,43 @@
 package com.mopix.diewar.graphics;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
-import com.mopix.diewar.graphics.level.LevelManager;
-import com.mopix.diewar.graphics.level.TileSetThemes.Phantasy.TileSetPhantasy;
+import com.mopix.diewar.graphics.level.hexagon.WorldManager;
 
-import static com.mopix.diewar.Config.*;
-
+//TODO rukl Interaceimplementierung für die Gamerlogic
 public class Renderer extends ApplicationAdapter {
 
-    private OrthographicCamera mainCamera;
+    private final int viewportWidth;
 
-    private LevelManager levelManager;
+    private final int viewportHeight;
 
-    private MapRenderer mapRenderer;
+    private WorldManager worldManager;
 
-    public Renderer() {
-        TileSetPhantasy tileSetPhantasy = new TileSetPhantasy("hexagonTileset8x5.png", PHANTASY_TILE_WIDTH, PHANTASY_TILE_HEIGHT, PHANTASY_TILE_TEXTURE_WIDTH, PHANTASY_TILE_TEXTURE_HEIGHT);
-        levelManager = new LevelManager(tileSetPhantasy, 1000, 1000);
-        mapRenderer = new HexagonalTiledMapRenderer(levelManager.generateMap());
+    public Renderer(int displayWidth, int displayHeight) {
+        this.viewportWidth = displayWidth;
+        this.viewportHeight = displayHeight;
     }
 
     @Override
     public void create() {
-        int levelWidth = 1000;
-        int levelHeight = 1000;
-        float hexagonSize = calculateHexagonSize(levelWidth, levelHeight);
-
-        //  level = new Level(levelWidth, levelHeight, hexagonSize);
-        mainCamera = new OrthographicCamera();
-        mainCamera.setToOrtho(false, levelWidth, levelHeight);
-    }
-
-    /**
-     * TODO
-     *
-     * @param levelWidth
-     * @param levelHeight
-     * @return
-     */
-    private float calculateHexagonSize(int levelWidth, int levelHeight) {
-        int max = Math.max(levelHeight, levelWidth);
-        return 1; //TODO correct when field selection is implemented
-    }
-
-    @Override
-    public void render() {
-        mapRenderer.setView(mainCamera);
-        mapRenderer.render();
+        worldManager = new WorldManager(viewportWidth, viewportHeight);
     }
 
     @Override
     public void resize(int width, int height) {
+        worldManager.resize();
+    }
+
+    public void update() {
+    }
+
+    @Override
+    public void render() {
+        worldManager.render();
     }
 
     @Override
     public void dispose() {
-
+        worldManager.dispose();
     }
 
-    public void update() {
-
-    }
 }

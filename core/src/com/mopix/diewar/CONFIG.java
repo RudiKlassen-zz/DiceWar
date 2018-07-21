@@ -1,8 +1,19 @@
 package com.mopix.diewar;
 
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.math.Vector3;
 
-public class Config {
+public abstract class CONFIG {
+
+    // Cameraconfig
+    public static int CAMERAUNIT_WIDTH = 40;
+    public static int CAMERAUNIT_HEIGHT = 40;
+    public static Vector3 CAMERA_DEFAULT_DIRECTION = new Vector3(1, -1.4f, 1);
+    public static int NEARPLANE = 1;
+    public static int FARPLANE = 100;
+    public static int CAMERAPOSITION_X = -10;
+    public static int CAMERAPOSITION_Y = 50;
+    public static int CAMERAPOSITION_Z = -10;
 
     /*Desktop Application*/
     public static final int APPLICATION_WIDTH = 1280;

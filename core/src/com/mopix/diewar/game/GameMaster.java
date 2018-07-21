@@ -2,19 +2,15 @@ package com.mopix.diewar.game;
 
 import com.badlogic.gdx.utils.Disposable;
 import com.mopix.diewar.graphics.Renderer;
+import com.mopix.diewar.graphics.TileManagerI;
 
 public class GameMaster implements Disposable{
 
-    private Renderer renderer;
+    private TileManagerI tileManager;
 
-    public GameMaster(){
-        renderer = new Renderer();
-        renderer.create();
-    }
+    public GameMaster(TileManagerI tileManager) {
+        this.tileManager = tileManager;
 
-    public void render(){
-        renderer.update();
-        renderer.render();
     }
 
     @Override

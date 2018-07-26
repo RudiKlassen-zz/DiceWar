@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.g2d.PolygonRegion;
 import com.badlogic.gdx.graphics.g2d.PolygonSprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.EarClippingTriangulator;
+import com.badlogic.gdx.math.Vector2;
 
 public class WorldController {
 
     private final Pixmap pixmap;
     private int width, height;
+    private int hexagonWidth = 32, hexagonHeight = 32;
 
     private boolean modified;
 
@@ -19,23 +21,45 @@ public class WorldController {
 
     private PolygonSprite[][] sprites;
 
-
     public WorldController(int width, int height) {
         this.width = width;
         this.height = height;
         config = new Hexagon[width][height];
         sprites = new PolygonSprite[width][height];
 
-        this.pixmap = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+        this.pixmap = new Pixmap(hexagonWidth, hexagonHeight, Pixmap.Format.RGBA8888);
         pixmap.setColor(Color.WHITE);
-        pixmap.fillRectangle(0, 0, 32, 32);
+        pixmap.fillRectangle(0, 0, hexagonWidth, hexagonHeight);
 
         for (int x = 0; x < config.length; x++) {
             for (int y = 0; y < config[0].length; y++) {
-                sprites[x][y] = createPolygonSprite(x * 100, y * 100);
+                sprites[x][y] = createPolygonSprite(calcPosition(x, y));
                 modified = true;
             }
         }
+    }
+
+    private Vector2 calcPosition(int x, int y) {
+
+//
+//        float xOffset = evenNumberX ? 0 : hexagonWidth * 0.5f;
+//        float positionX = (hexagonWidth * x) + xOffset;
+//
+//        boolean evenNumberY = (y % 2) == 0;
+//        float yOffset = evenNumberY ? 0 : hexagonHeight * 0.75f;
+//        float positionY = (hexagonHeight * y) + yOffset;
+
+        boolean evenNumberX = (x % 2) == 0;
+        // Is the row an odd number?
+
+       float columnOffset = x * 16;
+        float positionX = (int)(x + columnOffset)/1; //switch + to - to align the grid the other way
+
+        float asdOffset = y * 16;
+        float positionY = (int)(y + asdOffset)/1; //switch + to - to align the grid the other way
+
+
+        return new Vector2(positionX, positionY);
     }
 
     public void setColorOn(int positionX, int positionY, Color color) {
@@ -81,6 +105,7 @@ public class WorldController {
     }
 
     Color[] colors = {Color.RED, Color.GOLD, Color.GRAY, Color.GREEN, Color.BLACK};
+
     public void update() {
 
         //TODO just for tests
@@ -88,11 +113,11 @@ public class WorldController {
         int yx = 0 + (int) (Math.random() * 100);
         int c = 0 + (int) (Math.random() * colors.length);
 
-        add(xx, yx,colors[c]);
+        add(xx, yx, colors[c]);
 
-        xx = 0 + (int) (Math.random() * 100);
-        yx = 0 + (int) (Math.random() * 100);
-        remove(xx, yx);
+//        xx = 0 + (int) (Math.random() * 100);
+//        yx = 0 + (int) (Math.random() * 100);
+//        remove(xx, yx);
         ////
 
         if (!modified) {
@@ -100,7 +125,7 @@ public class WorldController {
         }
 
         for (int x = 0; x < config.length; x++) {
-            for (int y = 0; y< config[0].length; y++) {
+            for (int y = 0; y < config[0].length; y++) {
                 Hexagon hexagon = config[x][y];
 
                 if (hexagon == null) {
@@ -109,7 +134,7 @@ public class WorldController {
                 }
 
                 if (sprites[x][y] == null) {
-                    sprites[x][y] = createPolygonSprite(x * 30, y * 30);
+                    sprites[x][y] = createPolygonSprite(calcPosition(x, y));
                 }
 
                 sprites[x][y].setColor(hexagon.getColor());
@@ -118,18 +143,15 @@ public class WorldController {
         modified = false;
     }
 
-    private PolygonSprite createPolygonSprite(int positionX, int positionY) {
-
-        int hexWidth = 32;
-        int hexHeight = 32;
+    private PolygonSprite createPolygonSprite(Vector2 position) {
 
         float[] vertices = {
-                positionX + hexWidth / 2, positionY,
-                positionX + hexWidth, positionY + hexHeight * .25f,
-                positionX + hexWidth, positionY + hexHeight * .75f,
-                positionX + hexWidth / 2, positionY + hexHeight,
-                positionX, positionY + hexHeight * .75f,
-                positionX, positionY + hexHeight * .25f
+                position.x + hexagonWidth / 2, position.y,
+                position.x + hexagonWidth, position.y + hexagonHeight * .25f,
+                position.x + hexagonWidth, position.y + hexagonHeight * .75f,
+                position.x + hexagonWidth / 2, position.y + hexagonHeight,
+                position.x, position.y + hexagonHeight * .75f,
+                position.x, position.y + hexagonHeight * .25f
         };
 
         Texture texture = new Texture(pixmap);
@@ -140,7 +162,7 @@ public class WorldController {
                 vertices,
                 new EarClippingTriangulator().computeTriangles(vertices).toArray());
         PolygonSprite polygonSprite = new PolygonSprite(polygonRegion);
-        polygonSprite.setOrigin(positionX + 100 / 2, positionY + 100 / 2);
+        polygonSprite.setOrigin(position.x, position.y);
         return polygonSprite;
     }
 

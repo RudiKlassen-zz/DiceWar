@@ -33,7 +33,6 @@ public class WorldManager {
     }
 
     private void initializeEnvironment() {
-
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.0f));
         environment.set(new ColorAttribute(ColorAttribute.Fog, 0.13f, 0.13f, 0.13f, 1f));
 
